@@ -182,7 +182,7 @@ Xem [ROADMAP.md](ROADMAP.md) — Phase 1–6 đã hoàn thành.
 
 ## TinyMCE
 
-Admin dùng TinyMCE 7 qua CDN. Production: đăng ký API key tại [tiny.cloud](https://www.tiny.cloud/) và thay trong `app/Views/admin/partials/tinymce.php`.
+Admin dùng TinyMCE 7 **self-hosted** tại `public/assets/vendor/tinymce/` — không cần API key Tiny Cloud. Cấu hình init trong `app/Views/admin/partials/tinymce.php`.
 
 ## License
 

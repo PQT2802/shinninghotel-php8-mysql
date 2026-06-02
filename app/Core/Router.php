@@ -101,9 +101,58 @@ class Router
         }
 
         [$class, $method] = $handler;
-        return function () use ($class, $method, $params) {
+        $args = $this->resolveActionArguments($class, $method, $params);
+
+        return function () use ($class, $method, $args) {
             $controller = new $class();
-            return $controller->$method(...array_values($params));
+            return $controller->$method(...$args);
+        };
+    }
+
+    /** @return list<mixed> */
+    private function resolveActionArguments(string $class, string $method, array $params): array
+    {
+        if (!method_exists($class, $method)) {
+            return array_values($params);
+        }
+
+        $reflection = new \ReflectionMethod($class, $method);
+        $args = [];
+
+        foreach ($reflection->getParameters() as $parameter) {
+            $name = $parameter->getName();
+
+            if (array_key_exists($name, $params)) {
+                $args[] = $this->castRouteParam($params[$name], $parameter);
+                continue;
+            }
+
+            if ($parameter->isDefaultValueAvailable()) {
+                $args[] = $parameter->getDefaultValue();
+            }
+        }
+
+        if ($args === [] && $params !== []) {
+            return array_values($params);
+        }
+
+        return $args;
+    }
+
+    private function castRouteParam(mixed $value, \ReflectionParameter $parameter): mixed
+    {
+        $type = $parameter->getType();
+
+        if (!$type instanceof \ReflectionNamedType || !$type->isBuiltin()) {
+            return $value;
+        }
+
+        return match ($type->getName()) {
+            'int' => (int) $value,
+            'float' => (float) $value,
+            'bool' => filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? (bool) $value,
+            'string' => (string) $value,
+            default => $value,
         };
     }
 

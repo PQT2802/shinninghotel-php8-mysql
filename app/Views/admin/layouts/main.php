@@ -24,7 +24,7 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="<?= asset('vendor/tinymce/tinymce.min.js') ?>"></script>
 <script src="<?= asset('js/admin.js') ?>"></script>
 </body>
 </html>
