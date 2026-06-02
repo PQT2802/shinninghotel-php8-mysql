@@ -165,7 +165,12 @@ php vendor\bin\phpunit
 
 ## Production
 
-Trong `.env`:
+Deploy lên VPS qua **GitHub Actions + GHCR + Docker Compose** (không git pull trên server):
+
+**[deploy/HUONG-DAN-TUNG-BUOC.md](deploy/HUONG-DAN-TUNG-BUOC.md)** — làm từng bước (VN, copy-paste).  
+**[deploy/CHECKLIST.md](deploy/CHECKLIST.md)** · **[deploy/README.md](deploy/README.md)** — chi tiết kỹ thuật.
+
+Trong `.env` trên VPS:
 
 ```env
 APP_ENV=production

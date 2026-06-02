@@ -1,0 +1,49 @@
+# Copy to VPS: /opt/apps/shinninghotel/docker-compose.yml
+# Replace CHANGE_ME_* passwords before first run.
+
+services:
+  app:
+    image: ghcr.io/pqt2802/shinninghotel-php8-mysql:latest
+    container_name: shinninghotel_app
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8081:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - shinninghotel_storage_uploads:/var/www/html/storage/uploads
+      - shinninghotel_public_uploads:/var/www/html/public/uploads
+    networks:
+      - shinninghotel_network
+
+  db:
+    image: mysql:8.0
+    container_name: shinninghotel_mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: shinninghotel_db
+      MYSQL_USER: shinninghotel_user
+      MYSQL_PASSWORD: CHANGE_ME_SHINNINGHOTEL_PASSWORD
+      MYSQL_ROOT_PASSWORD: CHANGE_ME_SHINNINGHOTEL_ROOT_PASSWORD
+    volumes:
+      - shinninghotel_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-pCHANGE_ME_SHINNINGHOTEL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - shinninghotel_network
+
+volumes:
+  shinninghotel_mysql_data:
+  shinninghotel_storage_uploads:
+  shinninghotel_public_uploads:
+
+networks:
+  shinninghotel_network:
+    name: shinninghotel_network

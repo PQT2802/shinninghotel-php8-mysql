@@ -1,3 +1,4 @@
+/deploy/my.env.local
 /vendor/
 composer.phar
 .env
