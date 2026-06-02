@@ -1,0 +1,27 @@
+# MySQL only — app chạy local bằng PHP (php -S)
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: shinning_mysql
+    restart: unless-stopped
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-secret}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-shinning_hotel}
+      MYSQL_USER: ${MYSQL_USER:-shinning}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-shinning}
+    volumes:
+      - shinning_mysql_data:/var/lib/mysql
+      # Tự import schema + seed lần đầu khi volume trống
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./database/seeders/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-psecret"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  shinning_mysql_data:
